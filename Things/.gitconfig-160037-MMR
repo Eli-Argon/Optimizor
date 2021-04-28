@@ -1,0 +1,9 @@
+[user]
+	email = 81053056+Eli-Argon@users.noreply.github.com
+	name = Eli
+[core]
+	editor = \"C:\\Progress\\MSystem\\Impdata\\DSK\\SuperCoolSecretAwesomeStuff\\VSCode\\Code.exe\" --wait
+[credential "helperselector"]
+	selected = manager
+[credential]
+	helper = manager
