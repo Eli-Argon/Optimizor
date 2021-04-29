@@ -34,15 +34,16 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon %pSecret%\Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.1.1
+;@Ahk2Exe-SetVersion 3.1.2
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
 GroupAdd, word_group, ahk_class WordPadClass ahk_exe wordpad.exe
 GroupAdd, explorer_group, ahk_class CabinetWClass ahk_exe explorer.exe
 GroupAdd, vscode_group, ahk_class Chrome_WidgetWin_1 ahk_exe Code.exe
+GroupAdd, mintty_group, ahk_exe mintty.exe
 aSecrets := [ "ahk_group explorer_group", "ahk_group fox_group", "ahk_group note_group", "ahk_group word_group"
-                    , "ahk_group vscode_group", "AutoHotkey Help ahk_class HH Parent ahk_exe hh.exe", "Window Spy" ]
+        , "ahk_group vscode_group", "ahk_group mintty_group", "AutoHotkey Help ahk_class HH Parent ahk_exe hh.exe", "Window Spy" ]
 aChangeDirViewExceptions := { Backups: "Backups", FirefoxPortable: "FirefoxPortable", VSCode: "VSCode", Git: "Git" }
 isNewOrder := false, isLatin := true, bLetterSwitch := true
 
