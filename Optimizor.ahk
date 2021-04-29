@@ -1,22 +1,16 @@
-﻿#NoEnv                       ; Recommended for performance and compatibility with future AutoHotkey releases.
-#Warn                        ; Enable warnings to assist with detecting common errors.
+﻿#NoEnv 
+#Warn 
 #SingleInstance Force
 /*@Ahk2Exe-Keep
 #NoTrayIcon
 */
 #UseHook
 #MenuMaskKey VKFF
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-SendMode Input               ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%
+SendMode Input
 StringCaseSense On
 AutoTrim Off
 SetCapsLockState AlwaysOff
-;@Ahk2Exe-SetName Optimizor
-;@Ahk2Exe-SetDescription To optimize and beyond!
-;@Ahk2Exe-SetMainIcon Optimizor.ico
-;@Ahk2Exe-SetCompanyName Konovalenko Systems
-;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.1.0
 
 If (A_ComputerName == "160037-MMR") {
     pSauce := "C:\Progress\MSystem\Impdata\DSK\Source"
@@ -34,31 +28,39 @@ If (A_ComputerName == "160037-MMR") {
     MsgBox, 16, Stop right there`, criminal scum!, You are doing something you shouldn't.
     ExitApp
 }
+
+;@Ahk2Exe-SetName Optimizor
+;@Ahk2Exe-SetDescription To optimize and beyond!
+;@Ahk2Exe-SetMainIcon %pSecret%\Things\Optimizor.ico
+;@Ahk2Exe-SetCompanyName Konovalenko Systems
+;@Ahk2Exe-SetCopyright Eli Konovalenko
+;@Ahk2Exe-SetVersion 3.1.1
+
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
 GroupAdd, word_group, ahk_class WordPadClass ahk_exe wordpad.exe
 GroupAdd, explorer_group, ahk_class CabinetWClass ahk_exe explorer.exe
 GroupAdd, vscode_group, ahk_class Chrome_WidgetWin_1 ahk_exe Code.exe
-aSecrets := [ "ahk_group explorer_group", "ahk_group fox_group", "ahk_group note_group", "ahk_group word_group", "ahk_group vscode_group"
-           ,"AutoHotkey Help ahk_class HH Parent ahk_exe hh.exe", "Window Spy" ]
+aSecrets := [ "ahk_group explorer_group", "ahk_group fox_group", "ahk_group note_group", "ahk_group word_group"
+                    , "ahk_group vscode_group", "AutoHotkey Help ahk_class HH Parent ahk_exe hh.exe", "Window Spy" ]
 aChangeDirViewExceptions := { Backups: "Backups", FirefoxPortable: "FirefoxPortable", VSCode: "VSCode", Git: "Git" }
 isNewOrder := false, isLatin := true, bLetterSwitch := true
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Restoring certain files ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-If ((A_ComputerName == "160037-MMR") or (A_ComputerName == "160037-MMR")) {
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Restoring certain files ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+If ((A_ComputerName == "160037-BGM") or (A_ComputerName == "160037-MMR")) {
     oFile := FileOpen(pSecret "\Things\.gitconfig-" A_ComputerName, "r-rwd")
     sGitConfig := oFile.Read(), oFile.Close()
     oFile := FileOpen("C:\Users\Progress\.gitconfig", "w-rwd")
-    fAbort(ErrorLevel, "Optimizor", "An error creating "".gitconfig"".")
+    fAbort(ErrorLevel, "Optimizor", "Could not open ""Progress\.gitconfig"" for writing.")
     oFile.Write(sGitConfig), oFile.Close()
-    fAbort(!WinExist("C:\Users\Progress\.gitconfig"), "Optimizor", "An error creating "".gitconfig"".")
+    fAbort(!FileExist("C:\Users\Progress\.gitconfig"), "Optimizor", "Could not create "".gitconfig"".")
 
     FileCreateDir, C:\Windows\ShellNew
     fAbort(ErrorLevel, "Optimizor", "An error creating ""C:\Windows\ShellNew"".")
     FileCopy, %pSecret%\AutoHotkey\Template.ahk, C:\Windows\ShellNew\Template.ahk, true
     fAbort(ErrorLevel, "Optimizor", "An error copying Template.ahk.")
 }
-;;;;;;;;;;;;;;;;;; Registry fiddling ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Registry fiddling ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 RegWrite, REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced, Hidden, 2
 
 RegRead, sVal, HKEY_CLASSES_ROOT\*\shell\Open in VSCode
@@ -121,7 +123,7 @@ If ErrorLevel and !sVal {
     ; RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Edit\Command, , "C:\Progress\Avicad\bin\AviCAD.exe" "`%1" `%*
 }    
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 fAbort(isCondition, sFuncName, sNote, dVars:="") {
 	If isCondition {
@@ -161,7 +163,6 @@ fToggle(title, text := "", path := "") {
 }
 
 ; { Icons: 1, SmallIcons: 2, List: 3, Details: 4, Tiles: 6, Content: 8 }
-
 fChangeDirView() {
     Local
     Global pSecret, aChangeDirViewExceptions
@@ -211,16 +212,16 @@ fAvicato() {
          ``-    \``_"'
 )
 
-    If WinExist("Avicato") {                       ; MsgBox, 64,, Inputbox exists.
+    If WinExist("Avicato") {                        ; MsgBox, 64,, Inputbox exists.
         If WinActive("Avicato") {		           ; MsgBox, 64,, Inputbox active.
             If WinExist("ahk_exe AviCAD.exe") {        			
-                WinClose                           ; MsgBox, 64,, Closing an AviCAD window.	
+                WinClose                                 ; MsgBox, 64,, Closing an AviCAD window.	
                 return
             }			
-            WinClose                               ; MsgBox, 64,, Closing the inputbox.
+            WinClose                                     ; MsgBox, 64,, Closing the inputbox.
             return
         }		
-        WinActivate		                           ; MsgBox, 64,, Activating the inputbox.
+        WinActivate		                                ; MsgBox, 64,, Activating the inputbox.
         return
     }
     
@@ -240,22 +241,22 @@ fAvicato() {
             StringUpper, type, type                                 ; m.num:= LTrim(m.num, "0")			
             aInput.Push({type: type, num: m.num})
         }
+
         If !aInput.Length() {
-            message := A_Index > 2 ? "`n      Та шо ви робите. Та скікі можна.`n"
-                                   : "`n      Неправильно. Спробуйте ще раз."
+            message := A_Index > 2 ? "`n      Та шо ви робите. Та скікі можна.`n" : "`n      Неправильно. Спробуйте ще раз."
             continue
         }
 
         aRun := [], sInfo := ""		
-        For idx, dPanel in aInput { ; ------- Iterating over the input array -------------------
-            pPanelDir := pSauce "\" dPanel.type            ; MsgBox % """" pPanelDir """"
+        For idx, dPanel in aInput { ; ------------------------------- Iterating over the input array ---------------------------------
+            pPanelDir := pSauce "\" dPanel.type
             If !InStr(FileExist(pPanelDir), "D", true) {                
                 sInfo .= "Папка """ dPanel.type """ не наи̌дена.`n"
                 continue
             }
 
             sPanelName := dPanel.type "-" dPanel.num
-            pPanelFile := "", nDate := 0, nDatePrev := 0 ; MsgBox % "sPanelName: """ sPanelName """"
+            pPanelFile := "", nDate := 0, nDatePrev := 0
             
             Loop, files, % pPanelDir "\" sPanelName "*.pxml", R
             { ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++     
@@ -292,7 +293,7 @@ fAvicato() {
                 sInfo .= "File """ sPanelName """ not found.`n"
                 continue
             } else aRun.Push("C:\Progress\Avicad\bin\AviCAD.exe """ pPanelFile """")
-        } ; ------------------ Iterating over the input array ----------------------------------
+        } ; ------------------------------------------------------- ^^^ Iterating over the input array  ^^^ ----------------------------------
 
         If sInfo
             MsgBox, 64,, % sInfo
@@ -304,7 +305,7 @@ fAvicato() {
                 Msgbox, 16,, % err.extra
         }
         break
-    } ; ++++++++++++++++++++ InputBox Loop +++++++++++++++++++++++++++++++++++++++++++++++++++++
+    } ; ++++++++++++++++++++ ^^^ InputBox Loop ^^^ +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 }
 
@@ -419,9 +420,9 @@ return
 
 #IfWinActive
 
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&  Remappings  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&  Remappings  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
 #If isNewOrder
 
 *LAlt::Send {Blind}{RCtrl DownR}
@@ -638,7 +639,7 @@ return
 
 
 #If isNewOrder and !GetKeyState("LAlt", "P")
-;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Special  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;
+;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Special  @@@@@@@@@@@@@@@@@@@@@@;
 
 #Space::
 isLatin := !isLatin
@@ -990,7 +991,7 @@ return
 *.::Send ^!{Up}         ; LAlt + .          => Ctrl + Alt + Up
 *+.::Send ^!+{Up}       ; LAlt + Shift + .  => Ctrl + Alt + Shift + Up
 
-;<==<==<==<==<==<==<==<==<==<==<==<==<==<==<==<==   Left side navigation: Home, End, PgUp, PgDn   <==<==<==<==<==<==<==<==<==<==<==<==<==<==
+;<==<==<==<==<==<==<==<==   Left side navigation: Home, End, PgUp, PgDn   <==<==<==<==<==<==<==<==<==<==
 
 *s::
 If GetKeyState(";")
