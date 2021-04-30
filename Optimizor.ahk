@@ -31,10 +31,10 @@ If (A_ComputerName == "160037-MMR") {
 
 ;@Ahk2Exe-SetName Optimizor
 ;@Ahk2Exe-SetDescription To optimize and beyond!
-;@Ahk2Exe-SetMainIcon %pSecret%\Things\Optimizor.ico
+;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.1.2
+;@Ahk2Exe-SetVersion 3.1.3
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
