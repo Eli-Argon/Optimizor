@@ -1,10 +1,11 @@
-﻿#NoEnv                       ; Recommended for performance and compatibility with future AutoHotkey releases.
-#Warn                        ; Enable warnings to assist with detecting common errors.
+﻿#NoEnv
+#Warn
 #SingleInstance Force
 ; #Persistent
 ; #NoTrayIcon
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-SendMode Input               ; Recommended for new scripts due to its superior speed and reliability.
+#UseHook
+SetWorkingDir %A_ScriptDir%
+SendMode Input
 StringCaseSense On
 AutoTrim Off
 ;@Ahk2Exe-SetName

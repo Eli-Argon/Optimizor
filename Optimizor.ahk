@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.2.0
+;@Ahk2Exe-SetVersion 3.2.1
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -240,73 +240,72 @@ fAvicato() {
     
     Loop { ; ++++++++++++ InputBox Loop ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         sInput := ""
-        InputBox, sInput, Avicato, % message,,,190,,,,,(w+)?(d+)
+        InputBox, sInput, Avicato, % message, , , 190, , , , , (w+)?(d+)
         If (sInput == "" or sInput == "(w+)?(d+)")
             break
 
-        aInput := [], prevPos := 1, prevLen := 0, m:= ""
+        
+        aInput := [], prevPos := 1, prevLen := 0, m := ""
         Loop {			
-            If !RegExMatch(sInput, "isSO)(?<type>[a-z]{1,6})[^a-z\d]?(?<num>\d+)[^a-z\d]?", m, m ? (m.Pos + m.Len) : 1)
+            If !RegExMatch(sInput, "ixsSO)(?<type>[a-z]{1,6}) [^a-z\d]? (?<num>\d+) [^a-z\d]?", m, m ? (m.Pos + m.Len) : 1)
                 break
             prevPos := m.Pos, prevLen := m.Len
 
-            type := m.type ; Otherwise StringUpper doesn't work
-            StringUpper, type, type                                 ; m.num:= LTrim(m.num, "0")			
-            aInput.Push({type: type, num: m.num})
+            aInput.Push({type: m.type, num: m.num})
         }
-
         If !aInput.Length() {
             message := A_Index > 2 ? "`n      Та шо ви робите. Та скікі можна.`n" : "`n      Неправильно. Спробуйте ще раз."
             continue
         }
 
+
         aRun := [], sInfo := ""		
-        For idx, dPanel in aInput { ; ------------------------------- Iterating over the input array ---------------------------------
-            pPanelDir := pSauce "\" dPanel.type
-            If !InStr(FileExist(pPanelDir), "D", true) {                
-                sInfo .= "Папка """ dPanel.type """ не наи̌дена.`n"
-                continue
-            }
+        For idx, dPanel in aInput { ; ------------------- Iterating over the input array --------------------
 
-            sPanelName := dPanel.type "-" dPanel.num
-            pPanelFile := "", nDate := 0, nDatePrev := 0
-            
-            Loop, files, % pPanelDir "\" sPanelName "*.pxml", R
-            { ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++     
-                    
-                If not RegExMatch(A_LoopFileName, ("sSx)^" sPanelName "\s"
-                                                 . "(?<year>  [0123]\d)-"
-                                                 . "(?<month> [01]\d)-"
-                                                 . "(?<day>   [0123]\d)"), sFile_ ) {
-                    fAbort(ErrorLevel, A_ThisFunc, "RegExMatch error.")                    
-                    continue
-                }						
-                nDate := "20" sFile_year sFile_month sFile_day
+            Loop, files, % pSecret "\*", D { ; Looking for folder in pSecret that match dPanel.type
+                If RegExMatch(A_LoopFileName, "isS)^" dPanel.type "$") ; If matching folder name found
+                    pPanelDir := A_LoopFileLongPath                    ; Search there for matching panels
+                else continue
 
-                If (nDatePrev == 0) {
-                    nDatePrev := nDate, pPanelFile  := A_LoopFileLongPath
-                    continue
-                } else {
-                    nDateComparer := nDate
-                    EnvSub, nDateComparer, %nDatePrev%, seconds
-                    If (nDateComparer == 0) {
-                        MsgBox, 16,, % "ERROR: Two or more """ sPanelName """ have the same date."
-                                     . "`n`nA_LoopFileName: " A_LoopFileName
-                                     . "`nsPanelName : " sPanelName						               
-                                     . "`nnDate: " nDate
-                                     . "`nnDatePrev: " nDatePrev
-                        return
+                sPanelName := dPanel.type "-" dPanel.num
+                pPanelFile := "", nDate := 0, nDatePrev := 0
+                Loop, files, % pPanelDir "\" sPanelName "*.pxml", R
+                { ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++     
+                        
+                    If not RegExMatch(A_LoopFileName, ("isSx)^" sPanelName "\s"
+                                                     . "(?<year>  [0123]\d)-"
+                                                     . "(?<month> [01]\d)-"
+                                                     . "(?<day>   [0123]\d)"), sFile_ ) {
+                        fAbort(ErrorLevel, A_ThisFunc, "RegExMatch error.")                    
+                        continue
+                    }						
+                    nDate := "20" sFile_year sFile_month sFile_day
+
+                    If (nDatePrev == 0) {
+                        nDatePrev := nDate, pPanelFile  := A_LoopFileLongPath
+                        continue
+                    } else {
+                        nDateComparer := nDate
+                        EnvSub, nDateComparer, %nDatePrev%, seconds
+                        If (nDateComparer == 0) {
+                            MsgBox, 16,, % "ERROR: Two or more """ sPanelName """ have the same date."
+                                        . "`n`nA_LoopFileName: " A_LoopFileName
+                                        . "`nsPanelName : " sPanelName						               
+                                        . "`nnDate: " nDate
+                                        . "`nnDatePrev: " nDatePrev
+                            return
+                        }
+                        If (nDateComparer > 0) 
+                            pPanelFile  := A_LoopFileLongPath, nDatePrev := nDate
                     }
-                    If (nDateComparer > 0) 
-                        pPanelFile  := A_LoopFileLongPath, nDatePrev := nDate
-                }
-            } ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++
-
+                } ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++
+            }
+            
             If !pPanelFile  {
                 sInfo .= "File """ sPanelName """ not found.`n"
                 continue
             } else aRun.Push("C:\Progress\Avicad\bin\AviCAD.exe """ pPanelFile """")
-        } ; ------------------------------------------------------- ^^^ Iterating over the input array  ^^^ ----------------------------------
+        } ; --------------------------------- ^^^ Iterating over the input array  ^^^ -------------------
 
         If sInfo
             MsgBox, 64,, % sInfo
