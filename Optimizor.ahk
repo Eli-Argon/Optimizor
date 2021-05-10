@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.1.3
+;@Ahk2Exe-SetVersion 3.2.0
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -45,7 +45,7 @@ GroupAdd, mintty_group, ahk_exe mintty.exe
 aSecrets := [ "ahk_group explorer_group", "ahk_group fox_group", "ahk_group note_group", "ahk_group word_group"
         , "ahk_group vscode_group", "ahk_group mintty_group", "AutoHotkey Help ahk_class HH Parent ahk_exe hh.exe", "Window Spy" ]
 aChangeDirViewExceptions := { Backups: "Backups", FirefoxPortable: "FirefoxPortable", VSCode: "VSCode", Git: "Git" }
-isNewOrder := false, isLatin := true, bLetterSwitch := true
+isNewOrder := false, isLatin := true
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Restoring certain files ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 If ((A_ComputerName == "160037-BGM") or (A_ComputerName == "160037-MMR")) {
@@ -118,10 +118,6 @@ If ErrorLevel and !sVal {
     RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Open, , Open in VSCode
     RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Open, Icon, "%pSecret%\VSCode\Code.exe"`,0
     RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Open\Command, , "%pSecret%\VSCode\Code.exe" "`%1" `%*
-
-    ; RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Edit, , Open in Avicad
-    ; RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Edit, Icon, "C:\Progress\Avicad\bin\AviCAD.exe"`,0
-    ; RegWrite, REG_SZ, HKEY_CLASSES_ROOT\NoExtension\Shell\Edit\Command, , "C:\Progress\Avicad\bin\AviCAD.exe" "`%1" `%*
 }    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -150,6 +146,22 @@ ExitFunc(ExitReason, ExitCode) {
 }
 
 OnExit("ExitFunc")
+
+fCharToggle(charA, charB) {
+    Local
+    Static bCharToggle
+
+    If (A_PriorHotkey == A_ThisHotkey) {
+        bCharToggle := !bCharToggle
+        Send {Backspace}
+        If bCharToggle
+            Send %charA%
+        else Send %charB%
+    } else {
+        Send %charA%
+        bCharToggle := true
+    }
+}
 
 fToggle(title, text := "", path := "") {
     If WinActive(title, text) {	
@@ -384,12 +396,6 @@ If isNewOrder {
 }
 return
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   Hotcray   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;           ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 Capslock::Backspace
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
@@ -422,7 +428,7 @@ return
 #IfWinActive
 
 ;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&  Remappings  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
+;&&&&&&&&&&&&&&&&&&&&&  Remappings  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
 ;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&;
 #If isNewOrder
 
@@ -433,9 +439,10 @@ If (A_PriorKey == "LAlt")
 Send {Blind}{RCtrl Up}
 return
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;  Latin (Colemak): a, b, c, h, m, q, v, w, x, z are unchanged  ;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;  Latin  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #If isNewOrder and !GetKeyState("LAlt", "P") and isLatin
 
 e::Send f
@@ -488,26 +495,15 @@ n::Send k
 +.::Send {!}
 +/::Send |
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;  Cyrillic (don't remember name)  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;  Cyrillic  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #If isNewOrder and !GetKeyState("LAlt", "P") and !isLatin
 
 q::Send ц
 w::Send ь
 e::Send я
-r::
-If (A_PriorHotkey == A_ThisHotkey) {
-    bLetterSwitch := !bLetterSwitch
-    Send {Backspace}
-    If bLetterSwitch
-        Send э
-    else Send є
-} else {
-    Send э
-    bLetterSwitch := true
-}
-return
+r::fCharToggle("э", "є")
 t::Send ф
 y::Send з
 u::Send в
@@ -518,7 +514,7 @@ p::Send ч
 ]::Send щ
 
 a::Send у
-s::Send и
+s::fCharToggle("и", "й")
 d::Send е
 f::Send о
 g::Send а
@@ -527,34 +523,12 @@ j::Send н
 k::Send т
 l::Send с
 `;::Send р
-'::
-If (A_PriorHotkey == A_ThisHotkey) {
-    bLetterSwitch := !bLetterSwitch
-    Send {Backspace}
-    If bLetterSwitch
-        Send ї
-    else Send ґ	
-} else {
-    Send ї
-    bLetterSwitch := true
-}
-return
+'::fCharToggle("ї", "ґ")
 
 z::Send .
 x::Send `,
 c::Send х
-v::
-If (A_PriorHotkey == A_ThisHotkey) {
-    bLetterSwitch := !bLetterSwitch
-    Send {Backspace}
-    If bLetterSwitch
-        Send ы
-    else Send і
-} else {
-    Send ы
-    bLetterSwitch := true
-}
-return
+v::fCharToggle("ы", "і")
 b::Send ю
 n::Send б
 m::Send м
@@ -565,18 +539,7 @@ m::Send м
 +q::Send Ц
 +w::Send ъ
 +e::Send Я
-+r::
-If (A_PriorHotkey == A_ThisHotkey) {
-    bLetterSwitch := !bLetterSwitch
-    Send {Backspace}
-    If bLetterSwitch
-        Send Э
-    else Send Є
-} else {
-    Send Э
-    bLetterSwitch := true
-}
-return
++r::fCharToggle("Э", "Є")
 +t::Send Ф
 +y::Send З
 +u::Send В
@@ -587,7 +550,7 @@ return
 +]::Send Щ
 
 +a::Send У
-+s::Send И
++s::fCharToggle("И", "Й")
 +d::Send Е
 +f::Send О
 +g::Send А
@@ -596,34 +559,12 @@ return
 +k::Send Т
 +l::Send С
 +`;::Send Р
-+'::
-If (A_PriorHotkey == A_ThisHotkey) {
-    bLetterSwitch := !bLetterSwitch
-    Send {Backspace}
-    If bLetterSwitch
-        Send Ї
-    else Send Ґ
-} else {
-    Send Ї
-    bLetterSwitch := true
-}
-return
++'::fCharToggle("Ї", "Ґ")
 
 +z::Send {!}
 +x::Send ?
 +c::Send Х
-+v::
-If (A_PriorHotkey == A_ThisHotkey) {
-    bLetterSwitch := !bLetterSwitch
-    Send {Backspace}
-    If bLetterSwitch
-        Send Ы
-    else Send І
-} else {
-    Send Ы
-    bLetterSwitch := true
-}
-return
++v::fCharToggle("Ы", "І")
 +b::Send Ю
 +n::Send Б
 +m::Send М
@@ -633,14 +574,7 @@ return
 
 
 
-
-
-
-
-
-
 #If isNewOrder and !GetKeyState("LAlt", "P")
-;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Special  @@@@@@@@@@@@@@@@@@@@@@;
 
 #Space::
 isLatin := !isLatin
@@ -665,18 +599,13 @@ return
 <^w::Send !w        ; LCtrl + W   =>  Alt + W           VSCode: match whole word
 <^e::Send !r        ; LCtrl + E   =>  Alt + R           VSCode: use regex
 
-;;;;;;;;;;;;;;;  NORMAL states that don't change between  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus address bar
 
-;;;;;;;;;;;;;;;  SHIFT states that don't change between  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  SHIFT  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 +`::Send №  ;  № {U+2116} Numero sign
-; +VKDC::Send 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  AltGR  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  AltGR  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   >!`::
 <^>!`::Send ∞  ;  ∞ {U+    } Infinity sign
@@ -695,7 +624,7 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
   >!7::
 <^>!7::Send ÷  ;  ÷ {U+00F7} Division sign
   >!8::
-<^>!8::Send +
+<^>!8::Send {+}
   >!9::
 <^>!9::Send −  ;  − {U+2212} Minus sign
   >!0::
@@ -729,8 +658,6 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
 <^>![::Send ≥
   >!]::
 <^>!]::Send ≤
-;   >!VKDC::
-; <^>!VKDC::Send
 
   >!a::
 <^>!a::Send 0
@@ -743,7 +670,7 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
   >!g::
 <^>!g::Send 4
   >!h::
-<^>!h::Send ̄   ; ̄   {U+0304} (Combining macron)
+<^>!h::Send ‑  ;  ‑ {U+2011} Non-breaking hyphen
   >!j::
 <^>!j::Send {+}
   >!k::
@@ -776,9 +703,7 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
   >!/::
 <^>!/::Send &
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;  Shift + AltGR  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;   +>!`::
 ; +<^>!`::Send
@@ -817,8 +742,6 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
 ; +<^>![::Send
 ;   +>!]::
 ; +<^>!]::Send
-;   +>!VKDC::
-; +<^>!VKDC::Send
 
   +>!a::
 +<^>!a::Send ̀
@@ -841,7 +764,7 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
   +>!;::
 +<^>!;::Send {}}
   +>!'::
-+<^>!'::Send ‑  ;  ‑ {U+2011} Non-breaking hyphen
++<^>!'::Send ̄   ; ̄   {U+0304} (Combining macron)
                                                                                                 
   +>!z::
 +<^>!z::Send Æ
@@ -865,22 +788,11 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
 +<^>!/::Send ~
 
 
-
-
-
-
-
-
-
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;  LAlt states (navigation, cursor, misc)  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #If isNewOrder and GetKeyState("LAlt", "P")
 
-*4::Send !{F4}
 *m::Send {Delete}
 *q::Send ^+t            ; LAlt + Q          =>  Ctrl + Shift + T   Firefox: undo close tab
 *y::Send ^p             ; LAlt + Y          =>  Ctrl + P           VSCode: go to file
@@ -894,7 +806,7 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
 *+z::Send ^y            ; LAlt + Shift + Z  =>  Ctrl + Y           Redo action
 *b::Send ^/             ; LAlt + B          =>  Ctrl + /           VSCode: toggle comment
 
-
+; — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — ;
 *j::
 If GetKeyState(";")
   Send +{Left}                         ; LAlt + ; + J              =>  Shift + Left
@@ -1022,4 +934,3 @@ return
 *<^>!d::Send ^+{PgDn}        ; LAlt + AltGr + D  =>  Ctrl + Shift + PageDown   Firefox, VSCode: move tab right
 
 #If
-;#########################  Hotstrings (maybe)  ###############################################;
