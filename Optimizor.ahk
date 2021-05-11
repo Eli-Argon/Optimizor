@@ -262,7 +262,8 @@ fAvicato() {
         aRun := [], sInfo := ""		
         For idx, dPanel in aInput { ; ------------------- Iterating over the input array --------------------
 
-            Loop, files, % pSecret "\*", D { ; Looking for folder in pSecret that match dPanel.type
+            Loop, files, % pSecret "\*", D
+            { ; Looking for folder in pSecret that match dPanel.type
                 If RegExMatch(A_LoopFileName, "isS)^" dPanel.type "$") ; If matching folder name found
                     pPanelDir := A_LoopFileLongPath                    ; Search there for matching panels
                 else continue
