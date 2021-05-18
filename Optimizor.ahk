@@ -770,7 +770,7 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
 *p::Send !d             ; LAlt + P          =>  Alt + D               Explorer, Firefox: focus address bar
 
 *g::Send ^k^[           ; LAlt + G          =>  Ctrl + K + Ctrl + [   VSCode: fold region recursively
-*h::Send ^+]            ; LAlt + H          =>  Ctrl + K + Ctrl + ]   VSCode: unfold region recursively
+*h::Send ^k^]           ; LAlt + H          =>  Ctrl + K + Ctrl + ]   VSCode: unfold region recursively
 
 *+z::Send ^y            ; LAlt + Shift + Z  =>  Ctrl + Y              Redo action
 *b::Send ^/             ; LAlt + B          =>  Ctrl + /              VSCode: toggle comment
