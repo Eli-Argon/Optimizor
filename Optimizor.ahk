@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.3.0
+;@Ahk2Exe-SetVersion 3.4.0
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -763,17 +763,17 @@ VKDC::Send !d       ; \           =>  Alt + D           Explorer, Firefox: focus
 #If isNewOrder and GetKeyState("LAlt", "P")
 
 *m::Send {Delete}
-*q::Send ^+t            ; LAlt + Q          =>  Ctrl + Shift + T   Firefox: undo close tab
-*y::Send ^p             ; LAlt + Y          =>  Ctrl + P           VSCode: go to file
-*u::Send ^g             ; LAlt + U          =>  Ctrl + G           VSCode: go to line
-*o::Send +{F10}         ; LAlt + O          =>  Shift + F10        Context menu
-*p::Send !d             ; LAlt + P          =>  Alt + D            Explorer, Firefox: focus address bar
+*q::Send ^+t            ; LAlt + Q          =>  Ctrl + Shift + T      Firefox: undo close tab
+*y::Send ^p             ; LAlt + Y          =>  Ctrl + P              VSCode: go to file
+*u::Send ^g             ; LAlt + U          =>  Ctrl + G              VSCode: go to line
+*o::Send +{F10}         ; LAlt + O          =>  Shift + F10           Context menu
+*p::Send !d             ; LAlt + P          =>  Alt + D               Explorer, Firefox: focus address bar
 
-*g::Send ^+[            ; LAlt + G          =>  Ctrl + Shift + [   VSCode: collapse region
-*h::Send ^+]            ; LAlt + H          =>  Ctrl + Shift + ]   VSCode: uncollapse region
+*g::Send ^k^[           ; LAlt + G          =>  Ctrl + K + Ctrl + [   VSCode: fold region recursively
+*h::Send ^+]            ; LAlt + H          =>  Ctrl + K + Ctrl + ]   VSCode: unfold region recursively
 
-*+z::Send ^y            ; LAlt + Shift + Z  =>  Ctrl + Y           Redo action
-*b::Send ^/             ; LAlt + B          =>  Ctrl + /           VSCode: toggle comment
+*+z::Send ^y            ; LAlt + Shift + Z  =>  Ctrl + Y              Redo action
+*b::Send ^/             ; LAlt + B          =>  Ctrl + /              VSCode: toggle comment
 
 ; — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — — ;
 *j::
