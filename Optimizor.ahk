@@ -49,17 +49,14 @@ isNewOrder := false, isLatin := true
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Restoring certain files ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 If ((A_ComputerName == "160037-BGM") or (A_ComputerName == "160037-MMR")) {
-    oFile := FileOpen(pSecret "\Things\.gitconfig-" A_ComputerName, "r-rwd")
-    sGitConfig := oFile.Read(), oFile.Close()
-    oFile := FileOpen("C:\Users\Progress\.gitconfig", "w-rwd")
-    fAbort(ErrorLevel, "Optimizor", "Could not open ""Progress\.gitconfig"" for writing.")
-    oFile.Write(sGitConfig), oFile.Close()
+    FileCopy, %pSecret%\Things\.gitconfig-%A_ComputerName%, C:\Users\Progress\.gitconfig, true           ; .gitconfig
+    fAbort(ErrorLevel, "Optimizor", "An error copying «.gitconfig».")
     fAbort(!FileExist("C:\Users\Progress\.gitconfig"), "Optimizor", "Could not create "".gitconfig"".")
 
     FileCreateDir, C:\Windows\ShellNew
-    fAbort(ErrorLevel, "Optimizor", "An error creating ""C:\Windows\ShellNew"".")
+    fAbort(ErrorLevel, "Optimizor", "An error creating ""C:\Windows\ShellNew"".")                        ; Template.ahk
     FileCopy, %pSecret%\AutoHotkey\Template.ahk, C:\Windows\ShellNew\Template.ahk, true
-    fAbort(ErrorLevel, "Optimizor", "An error copying Template.ahk.")
+    fAbort(ErrorLevel, "Optimizor", "An error copying «Template.ahk».")
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Registry fiddling ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 RegWrite, REG_DWORD, HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced, Hidden, 2
@@ -199,17 +196,17 @@ fChangeDirView() {
 }
 
 fHide(aSecrets) {
-    For idx, item in aSecrets
+    For _, item in aSecrets
         WinHide, %item%
 }
 
 fShow(aSecrets) {		
-    For idx, item in aSecrets
+    For _, item in aSecrets
         WinShow, %item%
 }
 
 fClose(aSecrets) {
-    For idx, item in aSecrets
+    For _, item in aSecrets
         WinClose, %item%	
 }
 
@@ -247,11 +244,11 @@ fAvicato() {
         
         aInput := [], prevPos := 1, prevLen := 0, m := ""
         Loop {			
-            If !RegExMatch(sInput, "ixsSO)(?<type>[a-z]{1,6}) [^a-z\d]? (?<num>\d+) [^a-z\d]?", m, m ? (m.Pos + m.Len) : 1)
+            If !RegExMatch(sInput, "ixsSO)(?<type>[а-я]{1,6}) [^а-я\d]? (?<num>\d+) [^а-я\d]?", m, m ? (m.Pos + m.Len) : 1)
                 break
             prevPos := m.Pos, prevLen := m.Len
 
-            aInput.Push({type: m.type, num: m.num})
+            aInput.Push( { type: m.type, num: m.num } )
         }
         If !aInput.Length() {
             message := A_Index > 2 ? "`n      Та шо ви робите. Та скікі можна.`n" : "`n      Неправильно. Спробуйте ще раз."
@@ -260,62 +257,34 @@ fAvicato() {
 
 
         aRun := [], sInfo := ""		
-        For idx, dPanel in aInput { ; ------------------- Iterating over the input array --------------------
+        For _, dPanel in aInput { ; ----------------- vvv Iterating over the input array vvv -------------------- ;
 
-            Loop, files, % pSecret "\*", D { ; Looking for folder in pSecret that match dPanel.type
+            Loop, files, % pSource "\*", D { ; Looking for folder in pSource that match dPanel.type
                 If RegExMatch(A_LoopFileName, "isS)^" dPanel.type "$") ; If matching folder name found
                     pPanelDir := A_LoopFileLongPath                    ; Search there for matching panels
                 else continue
 
                 sPanelName := dPanel.type "-" dPanel.num
-                pPanelFile := "", nDate := 0, nDatePrev := 0
                 Loop, files, % pPanelDir "\" sPanelName "*.pxml", R
-                { ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++     
-                        
-                    If not RegExMatch(A_LoopFileName, ("isSx)^" sPanelName "\s"
-                                                     . "(?<year>  [0123]\d)-"
-                                                     . "(?<month> [01]\d)-"
-                                                     . "(?<day>   [0123]\d)"), sFile_ ) {
-                        fAbort(ErrorLevel, A_ThisFunc, "RegExMatch error.")                    
-                        continue
-                    }						
-                    nDate := "20" sFile_year sFile_month sFile_day
-
-                    If (nDatePrev == 0) {
-                        nDatePrev := nDate, pPanelFile  := A_LoopFileLongPath
-                        continue
-                    } else {
-                        nDateComparer := nDate
-                        EnvSub, nDateComparer, %nDatePrev%, seconds
-                        If (nDateComparer == 0) {
-                            MsgBox, 16,, % "ERROR: Two or more """ sPanelName """ have the same date."
-                                        . "`n`nA_LoopFileName: " A_LoopFileName
-                                        . "`nsPanelName : " sPanelName						               
-                                        . "`nnDate: " nDate
-                                        . "`nnDatePrev: " nDatePrev
-                            return
-                        }
-                        If (nDateComparer > 0) 
-                            pPanelFile  := A_LoopFileLongPath, nDatePrev := nDate
-                    }
-                } ; +++++     +++++     +++++     +++++     +++++     +++++     +++++     +++++
+                    aRun.Push("C:\Progress\Avicad\bin\AviCAD.exe """ A_LoopFileLongPath """")                    
             }
             
-            If !pPanelFile  {
-                sInfo .= "File """ sPanelName """ not found.`n"
+            If !aRun.Length() {
+                sInfo .= "Panel """ sPanelName """ not found.`n"
                 continue
-            } else aRun.Push("C:\Progress\Avicad\bin\AviCAD.exe """ pPanelFile """")
-        } ; --------------------------------- ^^^ Iterating over the input array  ^^^ -------------------
+            } 
+        } ; --------------------------------- ^^^ Iterating over the input array  ^^^ ------------------- ;
 
         If sInfo
             MsgBox, 64,, % sInfo
         
-        For idx, panel in aRun {			
+        For _, panel in aRun {			
             Try
                 Run, %panel%,, max
             Catch err
                 Msgbox, 16,, % err.extra
         }
+        
         break
     } ; ++++++++++++++++++++ ^^^ InputBox Loop ^^^ +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
