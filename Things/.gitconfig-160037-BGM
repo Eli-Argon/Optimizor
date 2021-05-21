@@ -3,6 +3,7 @@
 	name = Eli-Argon
 [core]
 	editor = \"C:\\Progress\\MSystem\\Temp\\645ff040-5081-101b\\Microsoft\\default\\VSCode\\Code.exe\" --wait
+    quotepath = false
 [credential "helperselector"]
 	selected = manager
 [credential]
