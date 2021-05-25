@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.4.0
+;@Ahk2Exe-SetVersion 3.4.1
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -267,7 +267,8 @@ fAvicato() {
 
                 sPanelName := dPanel.type "-" dPanel.num
                 Loop, files, % pPanelDir "\" sPanelName "*.pxml", R
-                    aRun.Push("C:\Progress\Avicad\bin\AviCAD.exe """ A_LoopFileLongPath """")                    
+                    If RegExMatch(A_LoopFileName, "ixS)^" sPanelName "\b")
+                        aRun.Push("C:\Progress\Avicad\bin\AviCAD.exe """ A_LoopFileLongPath """")                    
             }
             
             If !aRun.Length() {
