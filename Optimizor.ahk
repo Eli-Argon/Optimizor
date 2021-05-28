@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.4.1
+;@Ahk2Exe-SetVersion 3.4.2
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -308,7 +308,7 @@ u0000 Imported and waiting
 fOpenLastClawed() {
     Local
 
-    oFile := FileOpen("C:\Progress\BK\Log\ImageFile.log", "r", "UTF-8")
+    oFile := FileOpen("C:\Progress\BK\Log\ImageFile.log", "r", "CP1251")
     sFileContents := oFile.Read(), oFile.Close()
 	fAbort(sFileContents == "", A_ThisFunc, "The ImageFile.log could not be read.") 
     RegExMatch(sFileContents, "sS).*U0027 to DSK\\\K.+?\.pxml", sMatch)
