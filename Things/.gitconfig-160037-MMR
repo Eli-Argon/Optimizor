@@ -2,6 +2,7 @@
 	email = 81053056+Eli-Argon@users.noreply.github.com
 	name = Eli-Argon
 [core]
+    autocrlf = false
 	editor = \"C:\\Progress\\MSystem\\Impdata\\DSK\\SuperCoolSecretAwesomeStuff\\VSCode\\Code.exe\" --wait
     quotepath = false
 [credential "helperselector"]
