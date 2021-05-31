@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.4.2
+;@Ahk2Exe-SetVersion 3.4.3
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -44,7 +44,8 @@ GroupAdd, vscode_group, ahk_class Chrome_WidgetWin_1 ahk_exe Code.exe
 GroupAdd, mintty_group, ahk_exe mintty.exe
 aSecrets := [ "ahk_group explorer_group", "ahk_group fox_group", "ahk_group note_group", "ahk_group word_group"
         , "ahk_group vscode_group", "ahk_group mintty_group", "AutoHotkey Help ahk_class HH Parent ahk_exe hh.exe", "Window Spy" ]
-aChangeDirViewExceptions := { Backups: "Backups", FirefoxPortable: "FirefoxPortable", VSCode: "VSCode", Git: "Git" }
+aChangeDirViewExceptions := { Backups: "Backups", FirefoxPortable: "FirefoxPortable"
+, VSCode: "VSCode", Git: "Git", ".git": ".git" }
 isNewOrder := false, isLatin := true
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Restoring certain files ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,25 +174,22 @@ fToggle(title, text := "", path := "") {
 }
 
 ; { Icons: 1, SmallIcons: 2, List: 3, Details: 4, Tiles: 6, Content: 8 }
-fChangeDirView() {
+fChangeDirView(pDir) {
     Local
-    Global pSecret, aChangeDirViewExceptions
+    Global aChangeDirViewExceptions
     win := ComObjCreate("Shell.Application").Windows[0]
     win.Document.CurrentViewMode := 1, win.Document.IconSize := 96
-    Loop, files, % pSecret "\*", D
+
+    Loop, files, % pDir "\*", D
     {
         win.Navigate(A_LoopFileLongPath)
         Sleep 50
-        win.Document.CurrentViewMode := 1, win.Document.IconSize := 96
         If aChangeDirViewExceptions.HasKey(A_LoopFileName)
             continue
-        Loop, files, % A_LoopFileLongPath "\*", RD
-        {
-            win.Navigate(A_LoopFileLongPath)
-            Sleep 50
-            win.Document.CurrentViewMode := 1, win.Document.IconSize := 96
-        }
+        
+        fChangeDirView(A_LoopFileLongPath)        
     }
+    
     win := ""
 }
 
@@ -334,7 +332,7 @@ f5::fToggle("ahk_class MozillaWindowClass ahk_exe firefox.exe", , pSecret "\Fire
 f6::fToggle("ahk_class Chrome_WidgetWin_1 ahk_exe Code.exe", , pSecret "\VSCode\Code.exe")
 
 
-f9::fChangeDirView()
+f9::fChangeDirView( pSecret )
 
 f10::fToggle("Window Spy", , pSecret "\AutoHotkey\WindowSpy.ahk")
 
