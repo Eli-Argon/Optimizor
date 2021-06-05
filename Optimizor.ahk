@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.4.3
+;@Ahk2Exe-SetVersion 3.5.0
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -477,9 +477,9 @@ y::Send з
 u::Send в
 i::Send к
 o::Send д
-p::Send ч
-[::Send ш
-]::Send щ
+p::fCharToggle("ч", "\")
+[::fCharToggle("ш", "«")
+]::fCharToggle("щ", "»")
 
 a::Send у
 s::fCharToggle("и", "й")
@@ -513,7 +513,7 @@ m::Send м
 +u::Send В
 +i::Send К
 +o::Send Д
-+p::Send Ч
++p::fCharToggle("Ч", "/")
 +[::Send Ш
 +]::Send Щ
 
