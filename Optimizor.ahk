@@ -34,7 +34,7 @@ If (A_ComputerName == "160037-MMR") {
 ;@Ahk2Exe-SetMainIcon Things\Optimizor.ico
 ;@Ahk2Exe-SetCompanyName Konovalenko Systems
 ;@Ahk2Exe-SetCopyright Eli Konovalenko
-;@Ahk2Exe-SetVersion 3.5.0
+;@Ahk2Exe-SetVersion 3.6.0
 
 GroupAdd, fox_group, ahk_class MozillaWindowClass ahk_exe firefox.exe
 GroupAdd, note_group, ahk_class Notepad ahk_exe notepad.exe
@@ -147,10 +147,12 @@ OnExit("ExitFunc")
 
 fCharToggle(charA, charB) {
     Local
-    Static bCharToggle
+    Static bCharToggle := true
 
     If (A_PriorHotkey == A_ThisHotkey) {
-        bCharToggle := !bCharToggle
+        If A_PriorKey in Space,LShift,RShift,LAlt,RAlt,LControl,RControl,LWin,RWin
+            bCharToggle := true
+        else bCharToggle := !bCharToggle
         Send {Backspace}
         If bCharToggle
             Send %charA%
